@@ -13,15 +13,10 @@ class UsersService @Inject constructor(
 ) {
     suspend fun getUsers():List<SecureUserModelWithId> {
         try {
-            println("### authToken: ${authTokenService.authToken.value}")
             val response = apiService.getUsers(authTokenService.authToken.value ?: "")
-            println("### responseUsers: $response")
             val users = response.data
             return  users
         } catch (e : Exception) {
-            println("### coulnd't get users: $e")
-            println("### coulnd't get users: ${e.cause}")
-            println("### coulnd't get users: ${e.message}")
             return emptyList()
         }
     }
@@ -37,12 +32,8 @@ class UsersService @Inject constructor(
     suspend fun getUserIdWithEmail(token: String, email: String): Int? {
         try {
             val response = apiService.getUserIdWithEmail(token, email)
-            println("### data${response.data}")
             return response.data
         } catch (e : Exception) {
-            println("### error ${e.cause}")
-            println("### error ${e.message}")
-            println("### error ${e.stackTraceToString()}")
             return null
         }
 

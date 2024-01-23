@@ -1,5 +1,7 @@
 package com.example.securebankingapp.di
 
+import android.content.Context
+import com.example.securebankingapp.R
 import com.example.securebankingapp.data.AccountRepository
 import com.example.securebankingapp.data.api.ApiService
 import com.example.securebankingapp.data.api.AuthInterceptor
@@ -11,11 +13,18 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.CertificatePinner
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.InputStream
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -31,7 +40,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(authTokenService: AuthTokenService): Retrofit {
+    fun provideRetrofit(authTokenService: AuthTokenService, @ApplicationContext context: Context): Retrofit {
         val httpClient = OkHttpClient.Builder().apply {
             addInterceptor { chain ->
                 val original: Request = chain.request()
@@ -47,6 +56,18 @@ object NetworkModule {
 
                 response
             }
+            val certInputStream: InputStream = context.resources.openRawResource(R.raw.cert)
+            val certificateFactory = CertificateFactory.getInstance("X.509")
+            val certificate: X509Certificate = certificateFactory.generateCertificate(certInputStream) as X509Certificate
+
+            val certificatePinner = CertificatePinner.Builder()
+                .add(
+                    "localhost",
+                    CertificatePinner.pin(certificate)
+                )
+                .build()
+
+            certificatePinner(certificatePinner)
         }
 
 

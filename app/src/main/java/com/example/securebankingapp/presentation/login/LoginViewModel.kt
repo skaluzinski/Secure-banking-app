@@ -36,7 +36,6 @@ class LoginViewModel @Inject constructor(
                     )
 
                     if (userId != null) {
-                        println("### userID $userId")
                         destinationsRelay.navigateTo(Destinations.Home(userId))
                     }
                 }

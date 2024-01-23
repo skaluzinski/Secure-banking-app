@@ -10,7 +10,6 @@ import javax.inject.Singleton
 @Singleton
 class AuthInterceptor @Inject constructor(private val authTokenService: AuthTokenService) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        println("### token in interceptor: ${authTokenService.authToken.value}")
         val request = chain.request().newBuilder()
             .build()
 

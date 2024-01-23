@@ -40,7 +40,6 @@ fun InputLoginBitsScreen(
 
     val onCharChange: (Int, String) -> Unit = remember {
         { bitIndex, bitString ->
-            println("### onCharChange")
             onEvent(
                 InputLoginBitsScreenEvent.BitChanged(
                     bitIndex,

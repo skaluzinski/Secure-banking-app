@@ -50,7 +50,6 @@ fun RegisterScreen(
         {onEvent(RegisterScreenEvent.TryToRegiste)}
     }
 
-    println("### ${viewState.canRegister}")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->

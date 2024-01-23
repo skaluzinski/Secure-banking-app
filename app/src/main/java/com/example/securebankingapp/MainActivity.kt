@@ -103,7 +103,6 @@ fun HandleNavigationEvents(
                 }
 
                 if (shouldPopUpToLogin) {
-                    println("### should pop up $authTokenState")
                     navController.navigate(Destinations.Login) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true

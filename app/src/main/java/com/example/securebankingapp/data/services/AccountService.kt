@@ -20,8 +20,6 @@ class AccountService @Inject constructor(
             val token = response.data["token"]
             return token
         } catch (e: Exception) {
-            println("### e $e ${e.stackTraceToString()}")
-            println("### ${e.cause}")
             return null
         }
     }
@@ -38,8 +36,6 @@ class AccountService @Inject constructor(
             return bits
 
         } catch (e: Exception) {
-            println("### e $e ${e.stackTraceToString()}")
-            println("### ${e.cause}")
             return null
         }
     }
@@ -48,15 +44,12 @@ class AccountService @Inject constructor(
         try {
             val response = apiService.loginWithBits(request)
 
-            println("### ${response.body()}")
 //            println("message = ${response.message}")
 //            val token = response?.data["token"] ?: return  null
 //            return token
             return null
 
         } catch (e: Exception) {
-            println("### e $e ${e.stackTraceToString()}")
-            println("### ${e.cause}")
             return null
         }
 
