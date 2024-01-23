@@ -15,3 +15,18 @@ data class RegisterModel(
     val email: String,
     val password: String
 )
+
+@Serializable
+data class SecureUserModelWithId(
+    val name: String,
+    val email: String,
+    val id: Int
+)
+
+@Serializable
+data class PrivateUserModel(
+    val name: String,
+    val email: String,
+    val balance: Float,
+    val accountNumber: String
+)

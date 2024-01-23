@@ -8,6 +8,7 @@ enum class PasswordValidationErrors(@StringRes val errorMessageResId: Int) {
     PASSWORD_NO_BIG_LETTER(R.string.password_error_no_big_letter),
     PASSWORD_NO_SMALL_LETTER(R.string.password_error_no_small_letter),
     PASSWORD_NO_SPECIAL_LETTER(R.string.password_error_no_special_sign),
+    PASSWORD_NO_Digit(R.string.password_error_no_digit),
     PASSWORD_TOO_LONG(R.string.password_error_too_long),
     PASSWORD_TOO_SHORT(R.string.password_error_too_short),
     INVALID_CHARACTERS(R.string.password_error_invalid_characters),

@@ -16,6 +16,12 @@ class InputLoginBitsViewModel @Inject constructor(
     private val destinationsRelay: DestinationsRelay,
     private val accountRepository: AccountRepository
 ) : BaseViewModel<InputLoginBitsViewState,InputLoginBitsScreenEvent>(initialState = InputLoginBitsViewState()) {
+    private var email = ""
+
+    fun setAssociatedEmail(emailString: String) {
+        email = emailString
+    }
+
     override fun handleEvent(event: InputLoginBitsScreenEvent) {
         when (event) {
             is InputLoginBitsScreenEvent.LoadInitialBits -> {
@@ -27,20 +33,18 @@ class InputLoginBitsViewModel @Inject constructor(
             }
             is InputLoginBitsScreenEvent.BitChanged -> updateState {
                 val newBitMap = state.value.visibleBits.toMutableMap()
-                println("### $newBitMap")
                 newBitMap[event.index] = event.bitString
-                println("### $newBitMap")
                 it.copy(visibleBits = newBitMap)
             }
 
             InputLoginBitsScreenEvent.TryToLogin -> viewModelScope.launch {
                 val loggedIn = accountRepository.loginWithBitsAndReturnSuccess(
-                    accountRepository.associatedEmailWithBits,
+                    email,
                     state.value.visibleBits.mapValues { it.value.first() }
                 )
 
                 if (loggedIn) {
-                    destinationsRelay.navigateTo(Destinations.Home)
+//                    destinationsRelay.navigateTo(Destinations.Home)
                 }
             }
         }

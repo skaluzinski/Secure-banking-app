@@ -1,9 +1,7 @@
 package com.example.securebankingapp.data.services
 
-import com.example.securebankingapp.data.AccountRepository
 import com.example.securebankingapp.data.api.ApiService
 import com.example.securebankingapp.data.common.ApiResponse
-import com.example.securebankingapp.data.common.MyResponse
 import com.example.securebankingapp.domain.EmailRequest
 import com.example.securebankingapp.domain.LoginRequest
 import com.example.securebankingapp.domain.LoginWithBitsRequest
@@ -64,20 +62,15 @@ class AccountService @Inject constructor(
 
     }
 
-//    suspend fun register(registerRequest: RegisterRequest): Boolean {
-//        return try {
-//            val response = apiService.createUser(registerRequest)
-//            when {
-//                response.isSuccessful -> ApiResponse.Success("Registration successful")
-//                else -> {
-//                    val errorBody = response.errorBody()?.string()
-//                    ApiResponse.Error(errorBody ?: "Registration failed")
-//                }
-//            }
-//        } catch (e: Exception) {
-//            ApiResponse.Error("Failed to connect to the server")
-//        }
-//    }
+    suspend fun register(registerRequest: RegisterRequest): Boolean {
+        try {
+            val response = apiService.createUser(registerRequest)
+
+            return  response.errorMessage == null && response.data.first == "success" && response.data.second
+        } catch (e: Exception) {
+            return false
+        }
+    }
 
     // ... other functions ...
 

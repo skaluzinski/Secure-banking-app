@@ -1,16 +1,23 @@
 package com.example.securebankingapp.presentation.register
 
+import androidx.lifecycle.viewModelScope
 import com.example.securebankingapp.core.BaseViewModel
 import com.example.securebankingapp.core.ViewModelEvent
 import com.example.securebankingapp.core.ViewModelState
+import com.example.securebankingapp.data.AccountRepository
 import com.example.securebankingapp.domain.EmailValidationError
 import com.example.securebankingapp.domain.PasswordValidationErrors
 import com.example.securebankingapp.domain.NameValidationErrors
+import com.example.securebankingapp.navigation.Destinations
+import com.example.securebankingapp.navigation.DestinationsRelay
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
+    private val accountRepository: AccountRepository,
+    private val destinationsRelay: DestinationsRelay
 ) : BaseViewModel<RegisterViewState, RegisterScreenEvent>(initialState = RegisterViewState()) {
 
     private fun isValidEmailFormat(email: String): Boolean {
@@ -39,6 +46,8 @@ class RegisterViewModel @Inject constructor(
         password.length < 8 -> PasswordValidationErrors.PASSWORD_TOO_SHORT
         password.none { it.isUpperCase() } -> PasswordValidationErrors.PASSWORD_NO_BIG_LETTER
         password.none { it.isLowerCase() } -> PasswordValidationErrors.PASSWORD_NO_SMALL_LETTER
+        password.none { it.isLowerCase() } -> PasswordValidationErrors.PASSWORD_NO_SMALL_LETTER
+        password.none { it.isDigit() } -> PasswordValidationErrors.PASSWORD_NO_Digit
         password.none { it in specialLetters} -> PasswordValidationErrors.PASSWORD_NO_SPECIAL_LETTER
         else -> null
     }
@@ -157,7 +166,17 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             RegisterScreenEvent.TryToRegiste -> {
+                viewModelScope.launch {
+                    val registerSuccess = accountRepository.registerUser(
+                        email = state.value.email,
+                        password = state.value.password,
+                        name = state.value.name
+                    )
 
+                    if (registerSuccess) {
+                        destinationsRelay.navigateTo(Destinations.Login)
+                    }
+                }
             }
             is RegisterScreenEvent.NameChanged -> {
                 val nameValidationErrors = validateName(event.newName)

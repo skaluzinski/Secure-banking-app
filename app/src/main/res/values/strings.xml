@@ -10,6 +10,7 @@
     <string name="password_error_no_big_letter">Password should have at least 1 big letter</string>
     <string name="password_error_no_small_letter">Password should have at least 1 small letter</string>
     <string name="password_error_no_special_sign">Password should have at least 1 special letter</string>
+    <string name="password_error_no_digit">Password should have at least 1 digit</string>
     <string name="password_error_too_long">Password is too long</string>
     <string name="password_error_too_short">Password is too short</string>
     <string name="password_error_sql_injection">Password contains invalid characters</string>

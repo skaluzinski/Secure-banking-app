@@ -9,6 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.securebankingapp.presentation.depositMoney.DepositMoneyEvent
+import com.example.securebankingapp.presentation.depositMoney.DepositMoneyScreen
+import com.example.securebankingapp.presentation.depositMoney.DepositMoneyViewModel
+import com.example.securebankingapp.presentation.home.HomeScreen
+import com.example.securebankingapp.presentation.home.HomeScreenViewModel
 import com.kiwi.navigationcompose.typed.composable
 import kotlinx.serialization.ExperimentalSerializationApi
 import com.example.securebankingapp.presentation.login.LoginScreen
@@ -16,10 +21,16 @@ import com.example.securebankingapp.presentation.login.LoginViewModel
 import com.example.securebankingapp.presentation.loginWithBits.InputLoginBitsScreen
 import com.example.securebankingapp.presentation.loginWithBits.InputLoginBitsScreenEvent
 import com.example.securebankingapp.presentation.loginWithBits.InputLoginBitsViewModel
+import com.example.securebankingapp.presentation.profile.ProfileEvent
+import com.example.securebankingapp.presentation.profile.ProfileScreen
+import com.example.securebankingapp.presentation.profile.ProfileViewModel
 import com.example.securebankingapp.presentation.register.RegisterScreen
 import com.example.securebankingapp.presentation.register.RegisterViewModel
 import com.example.securebankingapp.presentation.requestBitsToLogin.RequestBitsToLoginViewModel
 import com.example.securebankingapp.presentation.requestBitsToLogin.RequestLoginWithBitsScreen
+import com.example.securebankingapp.presentation.usersList.UsersListEvent
+import com.example.securebankingapp.presentation.usersList.UsersListScreen
+import com.example.securebankingapp.presentation.usersList.UsersListViewModel
 
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
@@ -44,14 +55,25 @@ internal fun AppNavHost(
             )
         }
         composable<Destinations.Home> {
+            val viewModel: HomeScreenViewModel by activity().viewModels()
+            val viewState by viewModel.state.collectAsState()
+
+
+            HomeScreen(
+                viewState = viewState,
+                homeScreenUserId = this.id,
+                onEvent = viewModel::onEvent
+            )
         }
         composable<Destinations.InputLoginBits> {
             val viewModel: InputLoginBitsViewModel by activity().viewModels()
             val viewState by viewModel.state.collectAsState()
             val bits = this.loginBits
+            val email = this.email
 
             LaunchedEffect(key1 = Unit) {
                 viewModel.onEvent(InputLoginBitsScreenEvent.LoadInitialBits(bits))
+                viewModel.setAssociatedEmail(email)
             }
 
             InputLoginBitsScreen(
@@ -71,7 +93,18 @@ internal fun AppNavHost(
         }
 
         composable<Destinations.Profile> {
+            val viewModel: ProfileViewModel by activity().viewModels()
+            val viewState by viewModel.state.collectAsState()
+            val userId = this.userId
 
+            LaunchedEffect(Unit) {
+                viewModel.onEvent(ProfileEvent.FetchInitialData(userId))
+            }
+
+            ProfileScreen(
+                viewState = viewState,
+                onEvent = viewModel::onEvent
+            )
         }
         composable<Destinations.Register> {
             val viewModel: RegisterViewModel by activity().viewModels()
@@ -83,7 +116,40 @@ internal fun AppNavHost(
             )
         }
         composable<Destinations.UserList> {
+            val viewModel: UsersListViewModel by activity().viewModels()
+            val viewState by viewModel.state.collectAsState()
 
+            LaunchedEffect(Unit) {
+                viewModel.onEvent(UsersListEvent.FetchInitialUsers)
+            }
+
+            UsersListScreen(
+                viewState = viewState,
+                senderInfo = this.viewerInfo,
+                onEvent = viewModel::onEvent
+            )
+        }
+
+        composable<Destinations.DepositMoneyScreen> {
+            val viewModel: DepositMoneyViewModel by activity().viewModels()
+            val viewState by viewModel.state.collectAsState()
+
+            val sender = this.sender
+            val recipentName = this.recipenName
+            val recipientId =  this.recipientId
+
+            LaunchedEffect(Unit) {
+                viewModel.onEvent(DepositMoneyEvent.SetRecipent(
+                    recipentName = recipentName,
+                    recipentId = recipientId
+                ))
+                viewModel.onEvent(DepositMoneyEvent.SetInitialData(sender))
+            }
+
+            DepositMoneyScreen(
+                viewState = viewState,
+                onEvent = viewModel::onEvent
+            )
         }
     }
 }

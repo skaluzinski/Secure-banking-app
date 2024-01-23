@@ -64,12 +64,6 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center
         ) {
             GenericInput(
-                title = "Surname",
-                value = viewState.surname,
-                onInputChanged = onSurnameChanged,
-                validationErrorResId = viewState.surnameValidationErrors?.errorMessageResId
-            )
-            GenericInput(
                 title = "Name",
                 value = viewState.name,
                 onInputChanged = onNameChanged,

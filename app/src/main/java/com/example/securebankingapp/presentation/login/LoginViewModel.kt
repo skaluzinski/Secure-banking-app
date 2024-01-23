@@ -5,6 +5,7 @@ import com.example.securebankingapp.core.BaseViewModel
 import com.example.securebankingapp.core.ViewModelEvent
 import com.example.securebankingapp.core.ViewModelState
 import com.example.securebankingapp.data.AccountRepository
+import com.example.securebankingapp.data.services.UsersService
 import com.example.securebankingapp.domain.EmailValidationError
 import com.example.securebankingapp.domain.PasswordValidationErrors
 import com.example.securebankingapp.domain.debounce
@@ -19,7 +20,8 @@ private const val LOGIN_DEBOUNCE_DURATION = 300L
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val destinationsRelay: DestinationsRelay,
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val usersService: UsersService
 ) : BaseViewModel<LoginScreenViewState, LoginScreenEvent>(initialState = LoginScreenViewState()) {
 
     override fun handleEvent(event: LoginScreenEvent) {
@@ -28,10 +30,15 @@ class LoginViewModel @Inject constructor(
             is LoginScreenEvent.OnPasswordChange -> validatePassword(event.newPassword)
             LoginScreenEvent.TryToRequest -> {
                 viewModelScope.launch {
-                    accountRepository.loginUser(
+                    val loginSuccess = accountRepository.loginUser(
                         email = state.value.email,
                         password = state.value.password
                     )
+                    val userId = usersService.getUserIdWithEmail(state.value.email)
+
+                    if (loginSuccess && userId != null) {
+                        destinationsRelay.navigateTo(Destinations.Home(userId))
+                    }
                 }
 
                 debounce<Unit>(LOGIN_DEBOUNCE_DURATION, viewModelScope.coroutineContext) {
@@ -89,7 +96,7 @@ class LoginViewModel @Inject constructor(
     private fun validateEmail(email: String) {
         val emailValidationError = when {
             email.isEmpty() -> EmailValidationError.EMPTY_FIELD
-            !isValidEmailFormat(email) -> EmailValidationError.INVALID_FORMAT
+//            !isValidEmailFormat(email) } -> EmailValidationError.INVALID_FORMAT
             email.length < 8 -> EmailValidationError.TOO_SHORT
             email.length >= 32 -> EmailValidationError.TOO_LONG
             containsSqlInjection(email) -> EmailValidationError.SQL_INJECTION

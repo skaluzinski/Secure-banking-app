@@ -4,6 +4,7 @@ import com.example.securebankingapp.data.AccountRepository
 import com.example.securebankingapp.data.api.ApiService
 import com.example.securebankingapp.data.api.AuthInterceptor
 import com.example.securebankingapp.data.services.AccountService
+import com.example.securebankingapp.data.services.AuthTokenService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -11,9 +12,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 
 @Module
@@ -26,25 +29,42 @@ object NetworkModule {
         .create()
 
     @Provides
-    fun provideRetrofit(): Retrofit {
+    @Singleton
+    fun provideRetrofit(authTokenService: AuthTokenService): Retrofit {
+        val httpClient = OkHttpClient.Builder().apply {
+            addInterceptor { chain ->
+                val original: Request = chain.request()
+                val request: Request = original.newBuilder()
+                    .header("Authorization", "Bearer ${authTokenService.authToken.value}")
+                    .method(original.method(), original.body())
+                    .build()
+                chain.proceed(request)
+            }
+        }
+
+
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(httpClient.build())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 
     @Provides
+    @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
 
     @Provides
-    fun provideAuthInterceptor(accountRepository: AccountRepository): AuthInterceptor {
-        return AuthInterceptor(accountRepository)
+    @Singleton
+    fun provideAuthInterceptor(authTokenService: AuthTokenService): AuthInterceptor {
+        return AuthInterceptor(authTokenService)
     }
 
     @Provides
+    @Singleton
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
@@ -56,7 +76,14 @@ object NetworkModule {
 
 
     @Provides
-    fun provideAccountRepository(accountService: AccountService): AccountRepository {
-        return AccountRepository(accountService) // Assuming AccountRepositoryImpl implements AccountRepository
+    @Singleton
+    fun provideAccountRepository(accountService: AccountService, authTokenService: AuthTokenService): AccountRepository {
+        return AccountRepository(accountService, authTokenService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthTokenService(): AuthTokenService {
+        return AuthTokenService()
     }
 }

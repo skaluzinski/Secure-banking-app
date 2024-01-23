@@ -23,7 +23,7 @@ class RequestBitsToLoginViewModel @Inject constructor(
             RequestLoginWithBitsScreenEvent.AskForBits -> viewModelScope.launch {
                 val bitsResponse = accountRepository.requestBitsToLogin(state.value.email)
                 if (bitsResponse.isNotEmpty()) {
-                    destinationsRelay.navigateTo(Destinations.InputLoginBits(bitsResponse))
+                    destinationsRelay.navigateTo(Destinations.InputLoginBits(state.value.email,bitsResponse))
                 }
             }
             is RequestLoginWithBitsScreenEvent.EmailChanged -> validateEmail(event.email)
