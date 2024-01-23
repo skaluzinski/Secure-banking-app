@@ -30,13 +30,13 @@ class LoginViewModel @Inject constructor(
             is LoginScreenEvent.OnPasswordChange -> validatePassword(event.newPassword)
             LoginScreenEvent.TryToRequest -> {
                 viewModelScope.launch {
-                    val loginSuccess = accountRepository.loginUser(
+                    val userId = accountRepository.loginUser(
                         email = state.value.email,
                         password = state.value.password
                     )
-                    val userId = usersService.getUserIdWithEmail(state.value.email)
 
-                    if (loginSuccess && userId != null) {
+                    if (userId != null) {
+                        println("### userID $userId")
                         destinationsRelay.navigateTo(Destinations.Home(userId))
                     }
                 }

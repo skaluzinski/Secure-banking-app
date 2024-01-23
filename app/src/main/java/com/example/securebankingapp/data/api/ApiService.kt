@@ -49,5 +49,5 @@ interface  ApiService {
     suspend fun getUser(@Path("id") userId: Int): ApiResponse<PrivateUserModel>
 
     @GET("user_id/{email}")
-    suspend fun getUserIdWithEmail(@Path("email") userId: String): ApiResponse<Int>
+    suspend fun getUserIdWithEmail(@Header("Authorization") token: String, @Path("email") userId: String): ApiResponse<Int>
 }

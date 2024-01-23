@@ -5,6 +5,7 @@ import com.example.securebankingapp.data.api.ApiService
 import com.example.securebankingapp.data.api.AuthInterceptor
 import com.example.securebankingapp.data.services.AccountService
 import com.example.securebankingapp.data.services.AuthTokenService
+import com.example.securebankingapp.data.services.UsersService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -34,11 +35,17 @@ object NetworkModule {
         val httpClient = OkHttpClient.Builder().apply {
             addInterceptor { chain ->
                 val original: Request = chain.request()
+
                 val request: Request = original.newBuilder()
                     .header("Authorization", "Bearer ${authTokenService.authToken.value}")
                     .method(original.method(), original.body())
                     .build()
-                chain.proceed(request)
+                val response = chain.proceed(request)
+                if (response.code() == 401) {
+                    authTokenService.updateToken(null)
+                }
+
+                response
             }
         }
 
@@ -77,8 +84,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAccountRepository(accountService: AccountService, authTokenService: AuthTokenService): AccountRepository {
-        return AccountRepository(accountService, authTokenService)
+    fun provideAccountRepository(accountService: AccountService, authTokenService: AuthTokenService, usersService: UsersService): AccountRepository {
+        return AccountRepository(accountService, authTokenService, usersService)
     }
 
     @Provides

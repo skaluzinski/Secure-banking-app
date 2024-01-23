@@ -2,10 +2,12 @@ package com.example.securebankingapp.data
 
 import com.example.securebankingapp.data.services.AccountService
 import com.example.securebankingapp.data.services.AuthTokenService
+import com.example.securebankingapp.data.services.UsersService
 import com.example.securebankingapp.domain.EmailRequest
 import com.example.securebankingapp.domain.LoginRequest
 import com.example.securebankingapp.domain.LoginWithBitsRequest
 import com.example.securebankingapp.domain.RegisterRequest
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +18,8 @@ enum class AccountState {
 @Singleton
 class AccountRepository @Inject constructor(
     private val accountService: AccountService,
-    private val authTokenService: AuthTokenService
+    private val authTokenService: AuthTokenService,
+    private val usersService: UsersService
 ) {
 
     var currentBitsToLogin = emptyList<Int>()
@@ -25,7 +28,7 @@ class AccountRepository @Inject constructor(
     var associatedEmailWithBits = ""
         private set
 
-    suspend fun loginUser(email:String, password: String): Boolean {
+    suspend fun loginUser(email:String, password: String): Int? {
         val token = accountService.loginAndGetToken(
             LoginRequest(
                 email,
@@ -34,7 +37,8 @@ class AccountRepository @Inject constructor(
         ) ?: ""
 
         authTokenService.updateToken(token)
-        return token.isNotEmpty()
+        delay(100)
+        return usersService.getUserIdWithEmail(token, email)
     }
 
     suspend fun registerUser(password: String, email: String, name: String): Boolean {

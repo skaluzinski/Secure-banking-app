@@ -34,11 +34,15 @@ class UsersService @Inject constructor(
         }
     }
 
-    suspend fun getUserIdWithEmail(email: String): Int? {
+    suspend fun getUserIdWithEmail(token: String, email: String): Int? {
         try {
-            val response = apiService.getUserIdWithEmail(email)
+            val response = apiService.getUserIdWithEmail(token, email)
+            println("### data${response.data}")
             return response.data
         } catch (e : Exception) {
+            println("### error ${e.cause}")
+            println("### error ${e.message}")
+            println("### error ${e.stackTraceToString()}")
             return null
         }
 
