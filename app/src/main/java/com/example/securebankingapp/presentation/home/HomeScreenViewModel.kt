@@ -5,6 +5,7 @@ import com.example.securebankingapp.core.BaseViewModel
 import com.example.securebankingapp.core.ViewModelEvent
 import com.example.securebankingapp.core.ViewModelState
 import com.example.securebankingapp.data.AccountRepository
+import com.example.securebankingapp.data.api.RevisedTransaction
 import com.example.securebankingapp.data.services.UsersService
 import com.example.securebankingapp.navigation.Destinations
 import com.example.securebankingapp.navigation.DestinationsRelay
@@ -28,6 +29,54 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             is HomeScreenEvent.ToUserProfile -> destinationsRelay.navigateTo(Destinations.Profile(event.userId))
+            HomeScreenEvent.Logout -> {
+                viewModelScope.launch {
+                    accountRepository.logout()
+                    destinationsRelay.navigateTo(Destinations.Login)
+                }
+            }
+
+            HomeScreenEvent.ToDeposit -> viewModelScope.launch {
+                destinationsRelay.navigateTo(Destinations.DepositMoneyScreen)
+            }
+
+            HomeScreenEvent.ToSendMoney -> viewModelScope.launch {
+                destinationsRelay.navigateTo(Destinations.Login)
+            }
+
+            HomeScreenEvent.ToWithdraw -> viewModelScope.launch {
+                destinationsRelay.navigateTo(Destinations.WithdrawMoneyScreen)
+            }
+
+            HomeScreenEvent.OnEnter -> viewModelScope.launch {
+                val account = accountRepository.getAccountModel()
+                if (account != null) {
+                    updateState {
+                        it.copy(
+                            name = account.name,
+                            balance = account.balance,
+                            cardNumber = "111211137",
+                            transactions = account.transactions
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            val account = accountRepository.getAccountModel()
+            if (account != null) {
+                updateState {
+                    it.copy(
+                        name = account.name,
+                        balance = account.balance,
+                        cardNumber = "111211137",
+                        transactions = account.transactions
+                    )
+                }
+            }
         }
     }
 
@@ -36,9 +85,18 @@ class HomeScreenViewModel @Inject constructor(
 sealed class HomeScreenEvent : ViewModelEvent {
     data class ToUsersList(val userId: Int): HomeScreenEvent()
     data class ToUserProfile(val userId: Int): HomeScreenEvent()
+    data object OnEnter: HomeScreenEvent()
+    data object Logout : HomeScreenEvent()
+    data object ToWithdraw: HomeScreenEvent()
+    data object ToDeposit: HomeScreenEvent()
+    data object ToSendMoney: HomeScreenEvent()
 }
 
 data class HomeScreenViewState(
-    val placeholder: Boolean = false
+    val placeholder: Boolean = false,
+    val name: String = "",
+    val cardNumber: String = "",
+    val balance: Float = 1337.21f,
+    val transactions: List<RevisedTransaction> = emptyList()
 ) : ViewModelState {
 }

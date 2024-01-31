@@ -29,11 +29,7 @@ class UsersListViewModel @Inject constructor(
                 updateState { it.copy(users = initialData) }
             }
 
-            is UsersListEvent.OnUserClicked -> destinationsRelay.navigateTo(Destinations.DepositMoneyScreen(
-                sender = event.senderInfo,
-                recipenName = event.recipentName,
-                recipientId = event.recipentId
-            ))
+            is UsersListEvent.OnUserClicked -> destinationsRelay.navigateTo(Destinations.DepositMoneyScreen)
         }
     }
 }

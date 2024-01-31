@@ -9,21 +9,21 @@ import javax.inject.Singleton
 @Singleton
 class UsersService @Inject constructor(
     private val apiService: ApiService,
-    private val authTokenService: AuthTokenService
+    private val accountStateService: AccountStateService
 ) {
     suspend fun getUsers():List<SecureUserModelWithId> {
         try {
-            val response = apiService.getUsers(authTokenService.authToken.value ?: "")
-            val users = response.data
-            return  users
+            return emptyList()
         } catch (e : Exception) {
             return emptyList()
         }
     }
     suspend fun getUserDataWithId(id: Int): PrivateUserModel? {
         try {
-            val response = apiService.getUser(id)
-            return response.data
+//            val response = apiService.getUser(id)
+//            return response.data
+            return null
+
         } catch (e : Exception) {
             return null
         }
@@ -31,8 +31,9 @@ class UsersService @Inject constructor(
 
     suspend fun getUserIdWithEmail(token: String, email: String): Int? {
         try {
-            val response = apiService.getUserIdWithEmail(token, email)
-            return response.data
+//            val response = apiService.getUserIdWithEmail(token, email)
+//            return response.data
+            return null
         } catch (e : Exception) {
             return null
         }

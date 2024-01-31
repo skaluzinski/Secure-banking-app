@@ -1,4 +1,4 @@
-package com.example.securebankingapp.presentation.depositMoney
+package com.example.securebankingapp.presentation.withdraw
 
 import android.icu.text.DecimalFormat
 import androidx.compose.animation.AnimatedVisibility
@@ -28,17 +28,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import kotlin.math.max
 
 @Composable
-fun DepositMoneyScreen(
-    viewState: DepositMoneyViewState,
-    onEvent: (DepositMoneyEvent) -> Unit
+fun WithdrawMoneyScreen(
+    viewState: WithdrawMoneyViewState,
+    onEvent: (WithdrawMoneyEvent) -> Unit
 ) {
     var depsitAmount by remember { mutableStateOf("") }
 
     val onDepositMoney: () -> Unit =
         remember {
-            {
-                println("### $depsitAmount ${depsitAmount.toFloat()} ${depsitAmount.toFloat().div(100f)}")
-                onEvent(DepositMoneyEvent.DepositMoneyClicked(depsitAmount.toFloat().div(100f))) }
+            { onEvent(WithdrawMoneyEvent.WithdrawMoneyClicked(depsitAmount.toFloat().div(100f))) }
         }
 
 
@@ -75,7 +73,7 @@ fun DepositMoneyScreen(
                 )
             )
             Button(onClick = onDepositMoney, enabled = depsitAmount.isNotEmpty() && !viewState.isTransactionInProgress) {
-                Text(text = "SendMoney")
+                Text(text = "Withdraw")
             }
         }
     }

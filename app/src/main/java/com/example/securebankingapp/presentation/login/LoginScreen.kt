@@ -29,7 +29,7 @@ fun LoginScreen(
 ) {
 
     val onLoginClicked: () -> Unit = remember {
-        { onLoginScreenEvent(LoginScreenEvent.TryToRequest)}
+        { onLoginScreenEvent(LoginScreenEvent.TryToLogin)}
     }
     val onProceedToRegisterClicked: () -> Unit = remember {
         { onLoginScreenEvent(LoginScreenEvent.ProceedToRegister)}
@@ -61,6 +61,7 @@ fun LoginScreen(
             ) {
                 Text(text = "Email", modifier = Modifier.width(70.dp))
                 TextField(
+                    enabled = !viewState.isLoginInProgress,
                     value = viewState.email,
                     onValueChange = { onEmailChanged(it) },
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -88,6 +89,7 @@ fun LoginScreen(
             ) {
                 Text(text = "Password:", modifier = Modifier.width(70.dp))
                 TextField(
+                    enabled = !viewState.isLoginInProgress,
                     value = viewState.password,
                     onValueChange = { onPasswordChanged(it) },
                     visualTransformation = PasswordVisualTransformation(),
@@ -112,13 +114,14 @@ fun LoginScreen(
             }
 
             Button(
-                enabled = viewState.canUserLogin,
+                enabled = viewState.canUserLogin && !viewState.isLoginInProgress,
                 onClick = onLoginClicked
             ) {
                 Text(text = "Login")
             }
 
             Button(
+                enabled = !viewState.isLoginInProgress,
                 onClick = onProceedToRegisterClicked
             ) {
                 Text(text = "Proceed to register form")
@@ -126,6 +129,7 @@ fun LoginScreen(
 
 
             Button(
+                enabled = !viewState.isLoginInProgress,
                 onClick = onAskForBitsToLogin
             ) {
                 Text(text = "Ask for bits to login")

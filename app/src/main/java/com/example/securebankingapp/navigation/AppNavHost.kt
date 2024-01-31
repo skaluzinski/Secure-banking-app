@@ -13,6 +13,7 @@ import com.example.securebankingapp.presentation.depositMoney.DepositMoneyEvent
 import com.example.securebankingapp.presentation.depositMoney.DepositMoneyScreen
 import com.example.securebankingapp.presentation.depositMoney.DepositMoneyViewModel
 import com.example.securebankingapp.presentation.home.HomeScreen
+import com.example.securebankingapp.presentation.home.HomeScreenEvent
 import com.example.securebankingapp.presentation.home.HomeScreenViewModel
 import com.kiwi.navigationcompose.typed.composable
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -31,6 +32,8 @@ import com.example.securebankingapp.presentation.requestBitsToLogin.RequestLogin
 import com.example.securebankingapp.presentation.usersList.UsersListEvent
 import com.example.securebankingapp.presentation.usersList.UsersListScreen
 import com.example.securebankingapp.presentation.usersList.UsersListViewModel
+import com.example.securebankingapp.presentation.withdraw.WithdrawMoneyScreen
+import com.example.securebankingapp.presentation.withdraw.WithdrawMoneyViewModel
 
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
@@ -58,10 +61,10 @@ internal fun AppNavHost(
             val viewModel: HomeScreenViewModel by activity().viewModels()
             val viewState by viewModel.state.collectAsState()
 
+            viewModel.onEvent(HomeScreenEvent.OnEnter)
 
             HomeScreen(
                 viewState = viewState,
-                homeScreenUserId = this.id,
                 onEvent = viewModel::onEvent
             )
         }
@@ -134,19 +137,17 @@ internal fun AppNavHost(
             val viewModel: DepositMoneyViewModel by activity().viewModels()
             val viewState by viewModel.state.collectAsState()
 
-            val sender = this.sender
-            val recipentName = this.recipenName
-            val recipientId =  this.recipientId
-
-            LaunchedEffect(Unit) {
-                viewModel.onEvent(DepositMoneyEvent.SetRecipent(
-                    recipentName = recipentName,
-                    recipentId = recipientId
-                ))
-                viewModel.onEvent(DepositMoneyEvent.SetInitialData(sender))
-            }
-
             DepositMoneyScreen(
+                viewState = viewState,
+                onEvent = viewModel::onEvent
+            )
+        }
+
+        composable<Destinations.WithdrawMoneyScreen> {
+            val viewModel: WithdrawMoneyViewModel by activity().viewModels()
+            val viewState by viewModel.state.collectAsState()
+
+            WithdrawMoneyScreen(
                 viewState = viewState,
                 onEvent = viewModel::onEvent
             )

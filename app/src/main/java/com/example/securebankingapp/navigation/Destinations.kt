@@ -8,7 +8,7 @@ import java.util.jar.Attributes.Name
 
 sealed interface Destinations: Destination {
     @Serializable
-    data class Home(val id: Int) : Destinations
+    data object Home : Destinations
 
     @Serializable
     data class Profile(val userId: Int) : Destinations
@@ -29,9 +29,8 @@ sealed interface Destinations: Destination {
     data class InputLoginBits(val email: String, val loginBits: List<Int>) : Destinations
 
     @Serializable
-    data class DepositMoneyScreen(
-        val sender: PrivateUserModel,
-        val recipientId: Int,
-        val recipenName: String
-    ): Destinations
+    data object DepositMoneyScreen : Destinations
+
+    @Serializable
+    data object WithdrawMoneyScreen : Destinations
 }

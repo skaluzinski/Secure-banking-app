@@ -5,13 +5,17 @@ import com.example.securebankingapp.core.BaseViewModel
 import com.example.securebankingapp.core.ViewModelEvent
 import com.example.securebankingapp.core.ViewModelState
 import com.example.securebankingapp.data.AccountRepository
+import com.example.securebankingapp.data.localStorage.EncryptedDataStorage
 import com.example.securebankingapp.data.services.UsersService
 import com.example.securebankingapp.domain.EmailValidationError
 import com.example.securebankingapp.domain.PasswordValidationErrors
 import com.example.securebankingapp.domain.debounce
 import com.example.securebankingapp.navigation.Destinations
 import com.example.securebankingapp.navigation.DestinationsRelay
+import com.example.securebankingapp.navigation.ToastModel
+import com.example.securebankingapp.navigation.ToastRelay
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,22 +25,46 @@ private const val LOGIN_DEBOUNCE_DURATION = 300L
 class LoginViewModel @Inject constructor(
     private val destinationsRelay: DestinationsRelay,
     private val accountRepository: AccountRepository,
-    private val usersService: UsersService
+    private val usersService: UsersService,
+    private val encryptedDataStorage: EncryptedDataStorage,
+    private val toastRelay: ToastRelay
 ) : BaseViewModel<LoginScreenViewState, LoginScreenEvent>(initialState = LoginScreenViewState()) {
+
+    init {
+        viewModelScope.launch {
+            updateState { it.copy(loginTries = encryptedDataStorage.getLoginTries()) }
+        }
+    }
 
     override fun handleEvent(event: LoginScreenEvent) {
         when (event) {
             is LoginScreenEvent.OnEmailChange -> validateEmail(event.newEmail)
             is LoginScreenEvent.OnPasswordChange -> validatePassword(event.newPassword)
-            LoginScreenEvent.TryToRequest -> {
+            LoginScreenEvent.TryToLogin -> {
+                if (encryptedDataStorage.getLoginTries() >= 3) {
+                    toastRelay.showToast(ToastModel("Too many login tries"))
+                    return
+                }
                 viewModelScope.launch {
-                    val userId = accountRepository.loginUser(
+                    updateState {
+                        it.copy(isLoginInProgress = true)
+                    }
+                    encryptedDataStorage.incrementLoginTries()
+                    val loginSuccess = accountRepository.tryToLogin(
                         email = state.value.email,
                         password = state.value.password
                     )
 
-                    if (userId != null) {
-                        destinationsRelay.navigateTo(Destinations.Home(userId))
+                    updateState {
+                        it.copy(isLoginInProgress = false)
+                    }
+
+                    updateState { it.copy(loginTries = encryptedDataStorage.getLoginTries()) }
+
+                    delay(100)
+                    if (loginSuccess) {
+                        encryptedDataStorage.resetLoginTries()
+                        destinationsRelay.navigateTo(Destinations.Home)
                     }
                 }
 
@@ -95,7 +123,7 @@ class LoginViewModel @Inject constructor(
     private fun validateEmail(email: String) {
         val emailValidationError = when {
             email.isEmpty() -> EmailValidationError.EMPTY_FIELD
-//            !isValidEmailFormat(email) } -> EmailValidationError.INVALID_FORMAT
+            !isValidEmailFormat(email)  -> EmailValidationError.INVALID_FORMAT
             email.length < 8 -> EmailValidationError.TOO_SHORT
             email.length >= 32 -> EmailValidationError.TOO_LONG
             containsSqlInjection(email) -> EmailValidationError.SQL_INJECTION
@@ -121,7 +149,7 @@ class LoginViewModel @Inject constructor(
 }
 
 sealed class LoginScreenEvent : ViewModelEvent {
-    data object TryToRequest : LoginScreenEvent()
+    data object TryToLogin : LoginScreenEvent()
     data object ProceedToRegister : LoginScreenEvent()
     data object ProceedToLoginWithBits : LoginScreenEvent()
     data class OnPasswordChange(val newPassword: String) : LoginScreenEvent()
@@ -135,6 +163,8 @@ data class LoginScreenViewState(
     val password: String = "",
     val passwordValidationErrors: PasswordValidationErrors? = PasswordValidationErrors.PASSWORD_EMPTY,
     val passwordInvalidCharacters: List<Char> = emptyList(),
+    val isLoginInProgress: Boolean = false,
+    val loginTries: Int = 0
 ) : ViewModelState {
     val canUserLogin = emailValidationError == null && passwordValidationErrors == null
 }

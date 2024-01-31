@@ -1,13 +1,13 @@
 package com.example.securebankingapp.data
 
+import com.example.securebankingapp.data.api.UserModel
 import com.example.securebankingapp.data.services.AccountService
-import com.example.securebankingapp.data.services.AuthTokenService
+import com.example.securebankingapp.data.services.AccountStateService
 import com.example.securebankingapp.data.services.UsersService
 import com.example.securebankingapp.domain.EmailRequest
 import com.example.securebankingapp.domain.LoginRequest
 import com.example.securebankingapp.domain.LoginWithBitsRequest
 import com.example.securebankingapp.domain.RegisterRequest
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,27 +18,29 @@ enum class AccountState {
 @Singleton
 class AccountRepository @Inject constructor(
     private val accountService: AccountService,
-    private val authTokenService: AuthTokenService,
+    private val accountStateService: AccountStateService,
     private val usersService: UsersService
 ) {
-
     var currentBitsToLogin = emptyList<Int>()
         private set
 
     var associatedEmailWithBits = ""
         private set
 
-    suspend fun loginUser(email:String, password: String): Int? {
-        val token = accountService.loginAndGetToken(
-            LoginRequest(
-                email,
-                password
-            )
-        ) ?: ""
+    suspend fun tryToLogin(email:String, password: String): Boolean {
+        val loginSuccess = accountService.tryToLogin(LoginRequest(email, password)) == true
+        accountStateService.updateState(loginSuccess)
+        return loginSuccess
+    }
 
-        authTokenService.updateToken(token)
-        delay(100)
-        return usersService.getUserIdWithEmail(token, email)
+    suspend fun logout(): Boolean {
+        val logoutSuccess = accountService.logout()
+        accountStateService.updateState(false)
+        return logoutSuccess
+    }
+
+    suspend fun getAccountModel(): UserModel? {
+        return accountService.getAccountModel()
     }
 
     suspend fun registerUser(password: String, email: String, name: String): Boolean {
@@ -64,11 +66,7 @@ class AccountRepository @Inject constructor(
                 bits = indexedBits
             )
         ) ?: ""
-        authTokenService.updateToken(token)
+        accountStateService.updateState(true)
         return token.isNotEmpty()
-    }
-
-    fun logout() {
-
     }
 }
