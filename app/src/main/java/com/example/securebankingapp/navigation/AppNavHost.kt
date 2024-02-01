@@ -101,10 +101,9 @@ internal fun AppNavHost(
         composable<Destinations.Profile> {
             val viewModel: ProfileViewModel by activity().viewModels()
             val viewState by viewModel.state.collectAsState()
-            val userId = this.userId
 
             LaunchedEffect(Unit) {
-                viewModel.onEvent(ProfileEvent.FetchInitialData(userId))
+                viewModel.onEvent(ProfileEvent.FetchInitialData)
             }
 
             ProfileScreen(

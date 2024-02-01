@@ -28,7 +28,7 @@ class HomeScreenViewModel @Inject constructor(
                     destinationsRelay.navigateTo(Destinations.UserList(viewer))
                 }
             }
-            is HomeScreenEvent.ToUserProfile -> destinationsRelay.navigateTo(Destinations.Profile(event.userId))
+            is HomeScreenEvent.ToUserProfile -> destinationsRelay.navigateTo(Destinations.Profile)
             HomeScreenEvent.Logout -> {
                 viewModelScope.launch {
                     accountRepository.logout()
@@ -84,7 +84,7 @@ class HomeScreenViewModel @Inject constructor(
 
 sealed class HomeScreenEvent : ViewModelEvent {
     data class ToUsersList(val userId: Int): HomeScreenEvent()
-    data class ToUserProfile(val userId: Int): HomeScreenEvent()
+    data object ToUserProfile : HomeScreenEvent()
     data object OnEnter: HomeScreenEvent()
     data object Logout : HomeScreenEvent()
     data object ToWithdraw: HomeScreenEvent()

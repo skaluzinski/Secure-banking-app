@@ -57,7 +57,8 @@ data class DepositMoneyViewState(
         email = "",
         name = "",
         balance = 0f,
-        transactions = emptyList()
+        transactions = emptyList(),
+        cardNumber = ""
     ),
     val isTransactionInProgress : Boolean = false
 ): ViewModelState

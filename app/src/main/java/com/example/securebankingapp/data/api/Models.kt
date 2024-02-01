@@ -43,6 +43,7 @@ data class PrivateUserModel(
 data class UserModel(
     val name: String,
     val email: String,
+    val cardNumber: String,
     val balance: Float,
     val transactions: List<RevisedTransaction>
 )

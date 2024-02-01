@@ -11,7 +11,7 @@ sealed interface Destinations: Destination {
     data object Home : Destinations
 
     @Serializable
-    data class Profile(val userId: Int) : Destinations
+    data object Profile : Destinations
 
     @Serializable
     data class UserList(val viewerInfo: PrivateUserModel) : Destinations

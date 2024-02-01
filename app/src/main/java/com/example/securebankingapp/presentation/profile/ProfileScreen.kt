@@ -26,7 +26,7 @@ fun ProfileScreen(
             Text(text = "User name: ${viewState.user.name}")
             Text(text = "User email: ${viewState.user.email}")
             Text(text = "User balance: ${viewState.user.balance}")
-            Text(text = "User account number: ${viewState.user.accountNumber}")
+            Text(text = "User account number: ${viewState.user.cardNumber}")
         }
     }
 }

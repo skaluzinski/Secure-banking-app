@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import com.example.securebankingapp.R
+import com.example.securebankingapp.navigation.Destinations
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +43,7 @@ fun HomeScreen(
     onEvent: (HomeScreenEvent) -> Unit
 ) {
     val onNavigateToProfileScreen: () -> Unit = remember {
-        { }
+        { onEvent(HomeScreenEvent.ToUserProfile)}
     }
     val onLogoutClicked: () -> Unit = remember {
         { onEvent(HomeScreenEvent.Logout) }
