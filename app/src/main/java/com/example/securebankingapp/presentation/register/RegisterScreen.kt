@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.securebankingapp.presentation.common.GenericInput
+import io.ktor.http.escapeIfNeeded
 
 @Composable
 fun RegisterScreen(
@@ -69,7 +70,7 @@ fun RegisterScreen(
                 validationErrorResId = viewState.nameValidationErrors?.errorMessageResId
             )
             GenericInput(
-                title = "Password",
+                title = "Password".escapeIfNeeded(),
                 value = viewState.password,
                 onInputChanged = onPasswordChanged,
                 validationErrorResId = viewState.passwordValidationErrors?.errorMessageResId

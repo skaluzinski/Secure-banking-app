@@ -41,7 +41,7 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             HomeScreenEvent.ToSendMoney -> viewModelScope.launch {
-                destinationsRelay.navigateTo(Destinations.Login)
+                destinationsRelay.navigateTo(Destinations.SendMoneyScreen)
             }
 
             HomeScreenEvent.ToWithdraw -> viewModelScope.launch {

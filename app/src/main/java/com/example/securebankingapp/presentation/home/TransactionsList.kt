@@ -64,6 +64,16 @@ fun TransactionCard(transaction: RevisedTransaction) {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
+                text = "Title: ${transaction.title}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Transaction type:: ${transaction.type}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
                 text = "Recipient: ${transaction.recipientEmail ?: "N/A"}",
                 style = MaterialTheme.typography.bodySmall
             )

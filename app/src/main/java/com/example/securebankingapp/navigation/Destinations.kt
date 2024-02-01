@@ -33,4 +33,7 @@ sealed interface Destinations: Destination {
 
     @Serializable
     data object WithdrawMoneyScreen : Destinations
+
+    @Serializable
+    data object SendMoneyScreen : Destinations
 }

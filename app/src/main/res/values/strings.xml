@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">Secure banking app</string>
     <string name="email_error_empty">Email cannot be empty</string>
+    <string name="title_error_empty">Title cannot be empty</string>
     <string name="email_error_invalid_format">Invalid email format</string>
+    <string name="title_error_invalid_format">Invalid title format</string>
     <string name="email_error_too_short">Email is too short</string>
     <string name="email_error_too_long">Email is too long</string>
+    <string name="title_error_too_long">Title is too long</string>
     <string name="email_error_sql_injection">No sql injection for you sir :((</string>
     <string name="email_error_contains_comma">Email cannot contain the comma character</string>
+    <string name="title_error_contains_comma">Title cannot contain the comma character</string>
     <string name="password_error_empty">Password cannot be empty</string>
     <string name="password_error_no_big_letter">Password should have at least 1 big letter</string>
     <string name="password_error_no_small_letter">Password should have at least 1 small letter</string>

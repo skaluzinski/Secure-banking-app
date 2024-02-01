@@ -29,11 +29,14 @@ import com.example.securebankingapp.presentation.register.RegisterScreen
 import com.example.securebankingapp.presentation.register.RegisterViewModel
 import com.example.securebankingapp.presentation.requestBitsToLogin.RequestBitsToLoginViewModel
 import com.example.securebankingapp.presentation.requestBitsToLogin.RequestLoginWithBitsScreen
+import com.example.securebankingapp.presentation.sendMoney.SendMoneyScreen
+import com.example.securebankingapp.presentation.sendMoney.SendMoneyViewModel
 import com.example.securebankingapp.presentation.usersList.UsersListEvent
 import com.example.securebankingapp.presentation.usersList.UsersListScreen
 import com.example.securebankingapp.presentation.usersList.UsersListViewModel
 import com.example.securebankingapp.presentation.withdraw.WithdrawMoneyScreen
 import com.example.securebankingapp.presentation.withdraw.WithdrawMoneyViewModel
+import io.ktor.client.plugins.api.Send
 
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
@@ -148,6 +151,16 @@ internal fun AppNavHost(
             val viewState by viewModel.state.collectAsState()
 
             WithdrawMoneyScreen(
+                viewState = viewState,
+                onEvent = viewModel::onEvent
+            )
+        }
+
+        composable<Destinations.SendMoneyScreen> {
+            val viewModel: SendMoneyViewModel by activity().viewModels()
+            val viewState by viewModel.state.collectAsState()
+
+            SendMoneyScreen(
                 viewState = viewState,
                 onEvent = viewModel::onEvent
             )

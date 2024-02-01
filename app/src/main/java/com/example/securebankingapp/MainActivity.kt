@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.time.Duration
 import java.time.LocalDateTime
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
     private val secondSinceLastUserInteraction: MutableStateFlow<Int> = MutableStateFlow(0)
 
     override fun onPause() {
+        destinationsRelay.navigateTo(Destinations.Login)
         accountStateService.updateState(false)
         super.onPause()
     }

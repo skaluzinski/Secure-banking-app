@@ -118,7 +118,7 @@ private fun BottomBar(
                 .weight(1f),
             onClick = { /*TODO*/ }) {
             Icon(
-                Icons.Default.Add,
+                painterResource(id = R.drawable.ic_deposit),
                 modifier = Modifier.clickable { onNavigateToDepositScreen() },
                 contentDescription = ""
             )
@@ -129,7 +129,8 @@ private fun BottomBar(
                 .weight(1f),
             onClick = { /*TODO*/ }) {
             Icon(
-                Icons.Default.List, contentDescription = "",
+                painterResource(id = R.drawable.ic_withdraw),
+                contentDescription = "",
                 modifier = Modifier.clickable { onNavigateToWithdrawScreen() },
             )
         }
@@ -139,7 +140,8 @@ private fun BottomBar(
                 .weight(1f),
             onClick = { /*TODO*/ }) {
             Icon(
-                Icons.Default.Send, contentDescription = "",
+                painterResource(id = R.drawable.ic_send_money), 
+                contentDescription = "",
                 modifier = Modifier.clickable { onNavigateToSendMoneyScreen() },
             )
         }

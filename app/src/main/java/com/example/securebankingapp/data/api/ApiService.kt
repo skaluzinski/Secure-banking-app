@@ -118,7 +118,9 @@ class ApiService @Inject constructor(
 
     suspend fun sendMoney(sendMoneyRequest: SendMoneyRequest): ApiOperationResponse {
         return client.post("$BASE_URL/transactions/send_money") {
-            body = sendMoneyRequest
+            setBody(sendMoneyRequest)
+            header(HttpHeaders.ContentType, ContentType.Application.Json)
+            contentType(ContentType.Application.Json)
         }.body()
     }
 
