@@ -43,12 +43,6 @@ fun DepositMoneyScreen(
 
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-        AnimatedVisibility(visible = viewState.isTransactionInProgress) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -77,6 +71,11 @@ fun DepositMoneyScreen(
             Button(onClick = onDepositMoney, enabled = depsitAmount.isNotEmpty() && !viewState.isTransactionInProgress) {
                 Text(text = "SendMoney")
             }
+        }
+    }
+    AnimatedVisibility(visible = viewState.isTransactionInProgress) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
     }
 }

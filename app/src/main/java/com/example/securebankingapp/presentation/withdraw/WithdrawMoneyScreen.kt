@@ -41,12 +41,6 @@ fun WithdrawMoneyScreen(
 
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-        AnimatedVisibility(visible = viewState.isTransactionInProgress) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,6 +69,11 @@ fun WithdrawMoneyScreen(
             Button(onClick = onDepositMoney, enabled = depsitAmount.isNotEmpty() && !viewState.isTransactionInProgress) {
                 Text(text = "Withdraw")
             }
+        }
+    }
+    AnimatedVisibility(visible = viewState.isTransactionInProgress) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
     }
 }

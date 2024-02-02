@@ -32,6 +32,7 @@ fun GenericInput(
     value: String,
     onInputChanged: (String) -> Unit,
     validationErrorResId: Int?,
+    isEnabled: Boolean = true,
     invalidCharacters: List<Char> = emptyList()
 ) {
     Column {
@@ -43,6 +44,7 @@ fun GenericInput(
             Text(text = "$title:", modifier = Modifier.width(70.dp))
             GenericTextField(
                 value = value,
+                isEnabled = isEnabled,
                 onValueChange = {
                     onInputChanged(
                         it.replace("\\s".toRegex(), "")
@@ -62,12 +64,14 @@ fun GenericInput(
 fun GenericTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    isEnabled:Boolean = true,
     keyboardOptions: KeyboardOptions
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
     TextField(
         value = value,
+        enabled = isEnabled,
         onValueChange = onValueChange,
         visualTransformation = if (passwordVisible) VisualTransformation.None else VisualTransformation.None,
     )

@@ -11,6 +11,7 @@ import com.example.securebankingapp.domain.EmailValidationError
 import com.example.securebankingapp.domain.SendMoneyRequest
 import com.example.securebankingapp.domain.TitleValidationError
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +30,7 @@ class SendMoneyViewModel @Inject constructor(
         when(event) {
              is SendMoneyEvent.SendMoneyClicked -> viewModelScope.launch{
                  updateState { it.copy(isTransactionInProgress = true) }
+                 delay(2000)
                  transactionRepository.sendMoney(
                      SendMoneyRequest(
                          recipientEmail = state.value.email,

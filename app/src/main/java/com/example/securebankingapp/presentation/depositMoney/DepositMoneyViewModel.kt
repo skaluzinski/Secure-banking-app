@@ -12,6 +12,7 @@ import com.example.securebankingapp.data.services.AccountService
 import com.example.securebankingapp.data.services.UsersService
 import com.example.securebankingapp.domain.DepositRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,6 +31,7 @@ class DepositMoneyViewModel @Inject constructor(
         when(event) {
              is DepositMoneyEvent.DepositMoneyClicked -> viewModelScope.launch{
                  updateState { it.copy(isTransactionInProgress = true) }
+                 delay(2000)
                  transactionRepository.depositMoney(DepositRequest(event.amount))
                  refreshBalance()
                  updateState { it.copy(isTransactionInProgress = false) }

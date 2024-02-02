@@ -56,12 +56,6 @@ fun SendMoneyScreen(
     }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-        AnimatedVisibility(visible = viewState.isTransactionInProgress) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,6 +84,7 @@ fun SendMoneyScreen(
             GenericInput(
                 title = "Title",
                 value = viewState.transactionTitle,
+                isEnabled = !viewState.isTransactionInProgress,
                 onInputChanged = onTitleChanged,
                 validationErrorResId = viewState.titleValidationErrors?.errorMessageResId
             )
@@ -97,12 +92,14 @@ fun SendMoneyScreen(
             GenericInput(
                 title = "Email",
                 value = viewState.email,
+                isEnabled = !viewState.isTransactionInProgress,
                 onInputChanged = onEmailChanged,
                 validationErrorResId = viewState.emailValidationError?.errorMessageResId
             )
             GenericInput(
                 title = "Email repeat",
                 value = viewState.repeatEmail,
+                isEnabled = !viewState.isTransactionInProgress,
                 onInputChanged = onRepeatEmailChanged,
                 validationErrorResId = viewState.repeatEmailValidationError?.errorMessageResId
             )
@@ -110,6 +107,11 @@ fun SendMoneyScreen(
             Button(onClick = onSendClicked, enabled = viewState.canSend && amountToSend.isNotEmpty() && !viewState.isTransactionInProgress) {
                 Text(text = "Send")
             }
+        }
+    }
+    AnimatedVisibility(visible = viewState.isTransactionInProgress) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
     }
 }
